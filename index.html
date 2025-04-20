@@ -63,10 +63,10 @@
 
     <!-- Dashboard -->
     <section id="dashboard-section" class="hidden">
-      <h2 class="text-2xl font-bold mb-4 text-center">Dashboard</h2>
+      <!-- <h2 class="text-2xl font-bold mb-4 text-center">Dashboard</h2> -->
       <div class="space-y-4">
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-semibold mb-2">Welcome, <span id="user-name"></span></h3>
+          <h3 class="font-semibold mb-2"><span id="user-name"></span></h3>
           <p><strong>Department:</strong> <span id="user-department"></span></p>
           <p><strong>NPK:</strong> <span id="user-npk"></span></p>
         </div>
@@ -76,11 +76,10 @@
         </button>
         <div id="statistics-summary" class="bg-white p-4 rounded shadow space-y-2 hidden">
           <h3 class="font-semibold text-lg">Statistics Summary</h3>
-          <p><strong>Most Participated Module:</strong> <span id="stat-most-participated">-</span></p>
-          <p><strong>Performance per Module:</strong></p>
-          <ul id="stat-performance-list" class="list-disc list-inside text-sm text-gray-700"></ul>
+          <canvas id="participationChart" class="mb-4" width="400" height="200"></canvas>
+          <canvas id="performanceChart" class="mb-4" width="400" height="200"></canvas>
+          <canvas id="completionChart" class="mb-4" width="400" height="200"></canvas>
           <p><strong>Average Quiz Score:</strong> <span id="stat-average-score">-</span></p>
-          <p><strong>Module Completion Rate:</strong> <span id="stat-completion-rate">-</span></p>
         </div>
 
         <div class="bg-white p-4 rounded shadow space-y-2">
@@ -90,13 +89,24 @@
           </ul>
         </div>
 
-        <div class="flex justify-between mt-6">
-          <button id="btn-logout" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">
-            Logout
-          </button>
-          <button id="btn-view-statistics" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">
-            View All Statistics
-          </button>
+        <div class="flex flex-col space-y-2 mt-6">
+          <div class="flex justify-between space-x-2">
+            <button id="btn-logout" class="flex-1 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition">
+              Logout
+            </button>
+            <button id="btn-view-statistics" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition">
+              View All Statistics
+            </button>
+          </div>
+          <div class="flex justify-between space-x-2">
+            <button id="btn-export-data" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition">
+              Export Data
+            </button>
+            <label for="import-file" class="flex-1 bg-yellow-600 text-white py-2 px-4 rounded text-center cursor-pointer hover:bg-yellow-700 transition">
+              Import Data
+            </label>
+            <input type="file" id="import-file" accept=".json" class="hidden" />
+          </div>
         </div>
       </div>
     </section>
@@ -126,9 +136,11 @@
   </main>
 
   <footer class="bg-blue-600 text-white p-4 text-center text-sm">
-    &copy; 2024 E-Learning Safety Riding
+    &copy; 2025 E-Learning Safety Riding
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
