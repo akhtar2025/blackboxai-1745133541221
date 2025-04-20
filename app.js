@@ -4,7 +4,12 @@ const modules = [
     id: 'basic-safety-riding',
     title: 'Dasar-Dasar Safety Riding',
     content: `
-      <p>Modul ini membahas dasar-dasar keselamatan berkendara sepeda motor, termasuk sikap berkendara yang benar dan perlengkapan keselamatan.</p>
+      <h3>Definisi Modul</h3>
+      <p>Dasar-dasar keselamatan berkendara sepeda motor meliputi sikap berkendara yang benar dan penggunaan perlengkapan keselamatan seperti helm, jaket, dan sepatu.</p>
+      <h3>Penyebab</h3>
+      <p>Kecelakaan sering terjadi karena kurangnya kesadaran akan keselamatan, penggunaan perlengkapan yang tidak lengkap, dan sikap berkendara yang ceroboh.</p>
+      <h3>Pencegahan</h3>
+      <p>Selalu gunakan perlengkapan keselamatan, patuhi aturan lalu lintas, dan berkendaralah dengan penuh kewaspadaan.</p>
     `,
     quiz: [
       {
@@ -43,7 +48,12 @@ const modules = [
     id: 'braking-techniques',
     title: 'Teknik Pengereman',
     content: `
-      <p>Modul ini membahas teknik pengereman yang aman dan efektif saat berkendara sepeda motor.</p>
+      <h3>Definisi Modul</h3>
+      <p>Teknik pengereman yang aman melibatkan penggunaan rem depan dan belakang secara bersamaan dengan tekanan yang tepat.</p>
+      <h3>Penyebab</h3>
+      <p>Pengereman yang tidak tepat dapat menyebabkan tergelincir atau kehilangan kendali kendaraan.</p>
+      <h3>Pencegahan</h3>
+      <p>Gunakan rem dengan halus dan terkontrol, serta latih teknik pengereman secara rutin.</p>
     `,
     quiz: [
       {
@@ -82,7 +92,12 @@ const modules = [
     id: 'emergency-anticipation',
     title: 'Antisipasi Kondisi Darurat',
     content: `
-      <p>Modul ini membahas cara mengantisipasi dan menghadapi kondisi darurat saat berkendara.</p>
+      <h3>Definisi Modul</h3>
+      <p>Antisipasi kondisi darurat adalah kemampuan untuk mengenali dan merespon situasi berbahaya saat berkendara.</p>
+      <h3>Penyebab</h3>
+      <p>Kondisi darurat dapat terjadi karena faktor lingkungan, kesalahan pengendara lain, atau gangguan teknis kendaraan.</p>
+      <h3>Pencegahan</h3>
+      <p>Selalu waspada, jaga jarak aman, dan siapkan rencana tindakan saat menghadapi situasi darurat.</p>
     `,
     quiz: [
       {
@@ -121,7 +136,12 @@ const modules = [
     id: 'microsleep',
     title: 'Microsleep',
     content: `
-      <p>Modul ini membahas bahaya microsleep dan cara menghindarinya saat berkendara.</p>
+      <h3>Definisi Modul</h3>
+      <p>Microsleep adalah tidur singkat yang tidak disadari yang dapat terjadi saat berkendara.</p>
+      <h3>Penyebab</h3>
+      <p>Kurang tidur, kelelahan, dan kurang istirahat dapat menyebabkan microsleep.</p>
+      <h3>Pencegahan</h3>
+      <p>Pastikan istirahat cukup sebelum berkendara dan hindari mengemudi saat mengantuk.</p>
     `,
     quiz: [
       {
@@ -160,7 +180,12 @@ const modules = [
     id: 'blind-spot',
     title: 'Blind Spot',
     content: `
-      <p>Modul ini membahas tentang blind spot dan cara menghindarinya saat berkendara.</p>
+      <h3>Definisi Modul</h3>
+      <p>Blind spot adalah area di sekitar kendaraan yang tidak terlihat oleh pengemudi melalui spion.</p>
+      <h3>Penyebab</h3>
+      <p>Posisi kendaraan lain yang berada di area blind spot sehingga tidak terlihat oleh pengemudi.</p>
+      <h3>Pencegahan</h3>
+      <p>Periksa spion dengan benar, lihat ke belakang secara langsung, dan hindari berada di blind spot kendaraan lain.</p>
     `,
     quiz: [
       {
@@ -271,7 +296,7 @@ function showDashboard() {
   moduleSection.classList.add('hidden');
   statisticsSection.classList.add('hidden');
 
-  userNameSpan.textContent = currentUser.name;
+  userNameSpan.textContent = `Selamat Datang ${currentUser.name} Salam Sehat & Selamat`;
   userDepartmentSpan.textContent = currentUser.department;
   userNpkSpan.textContent = currentUser.npk;
 
@@ -308,7 +333,10 @@ function renderModules() {
   moduleList.innerHTML = '';
   modules.forEach(mod => {
     const li = document.createElement('li');
-    li.className = 'bg-gray-100 p-3 rounded shadow cursor-pointer hover:bg-gray-200';
+    const completed = currentUser.quizResults && currentUser.quizResults[mod.id] !== undefined;
+    li.className = completed
+      ? 'bg-green-100 p-3 rounded shadow cursor-pointer hover:bg-green-200'
+      : 'bg-red-100 p-3 rounded shadow cursor-pointer hover:bg-red-200';
     li.textContent = mod.title;
     li.addEventListener('click', () => showModule(mod.id));
     moduleList.appendChild(li);
@@ -383,6 +411,12 @@ loginForm.addEventListener('submit', e => {
 
 // Handle logout
 btnLogout.addEventListener('click', () => {
+  // Check if user has completed all quizzes
+  const completedModules = Object.keys(currentUser.quizResults || {});
+  if (completedModules.length < modules.length) {
+    alert('Anda harus menyelesaikan semua quiz sebelum logout.');
+    return;
+  }
   currentUser = null;
   localStorage.removeItem('currentUser');
   showLogin();
@@ -426,7 +460,7 @@ quizForm.addEventListener('submit', e => {
   }
   saveUsers(users);
 
-  alert(`Quiz submitted! Your score: ${score}/100`);
+  // alert(`Quiz submitted! Your score: ${score}/100`);
   currentModule = null;
   showDashboard();
 });
@@ -528,10 +562,219 @@ function renderAllStatistics() {
   allStatisticsDiv.innerHTML = html;
 }
 
+const btnExportData = document.getElementById('btn-export-data');
+const importFileInput = document.getElementById('import-file');
+
 // Button event listeners
 btnViewStatistics.addEventListener('click', () => {
   showStatistics();
 });
+
+btnExportData.addEventListener('click', () => {
+  const users = loadUsers();
+  if (users.length === 0) {
+    alert('No data to export.');
+    return;
+  }
+
+  // Prepare worksheet data
+  const worksheetData = users.map(user => {
+    const row = {
+      NPK: user.npk,
+      Name: user.name,
+      Department: user.department,
+    };
+    modules.forEach(mod => {
+      row[mod.title] = user.quizResults && user.quizResults[mod.id] !== undefined ? user.quizResults[mod.id] : '';
+    });
+    return row;
+  });
+
+  // Create worksheet and workbook
+  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'E-Learning Data');
+
+  // Generate XLSX file and trigger download
+  XLSX.writeFile(workbook, 'e-learning-safety-riding-data.xlsx');
+});
+
+importFileInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const importedUsers = JSON.parse(e.target.result);
+      if (!Array.isArray(importedUsers)) {
+        alert('Invalid data format.');
+        return;
+      }
+      // Merge imported users with existing users
+      const existingUsers = loadUsers();
+      const mergedUsers = [...existingUsers];
+      importedUsers.forEach(importedUser => {
+        const index = mergedUsers.findIndex(u => u.npk === importedUser.npk);
+        if (index >= 0) {
+          mergedUsers[index] = importedUser;
+        } else {
+          mergedUsers.push(importedUser);
+        }
+      });
+      saveUsers(mergedUsers);
+      alert('Data imported successfully. Please refresh the page.');
+    } catch (err) {
+      alert('Failed to import data: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+// Statistics summary toggle and charts
+const btnToggleStatisticsSummary = document.getElementById('btn-toggle-statistics-summary');
+const statisticsSummaryDiv = document.getElementById('statistics-summary');
+let participationChart = null;
+let performanceChart = null;
+let completionChart = null;
+
+btnToggleStatisticsSummary.addEventListener('click', () => {
+  if (statisticsSummaryDiv.classList.contains('hidden')) {
+    statisticsSummaryDiv.classList.remove('hidden');
+    btnToggleStatisticsSummary.textContent = 'Hide Statistics Summary';
+    renderCharts();
+  } else {
+    statisticsSummaryDiv.classList.add('hidden');
+    btnToggleStatisticsSummary.textContent = 'Show Statistics Summary';
+  }
+});
+
+function renderCharts() {
+  const users = loadUsers();
+  if (users.length === 0) {
+    // Clear charts if no data
+    if (participationChart) participationChart.destroy();
+    if (performanceChart) performanceChart.destroy();
+    if (completionChart) completionChart.destroy();
+    return;
+  }
+
+  // Calculate participation count per module
+  const participationCount = {};
+  modules.forEach(m => {
+    participationCount[m.title] = 0;
+  });
+  users.forEach(u => {
+    Object.keys(u.quizResults).forEach(modId => {
+      const mod = modules.find(m => m.id === modId);
+      if (mod) participationCount[mod.title]++;
+    });
+  });
+
+  // Calculate average score per module
+  const performance = {};
+  modules.forEach(m => {
+    performance[m.title] = [];
+  });
+  users.forEach(u => {
+    Object.entries(u.quizResults).forEach(([modId, score]) => {
+      const mod = modules.find(m => m.id === modId);
+      if (mod) performance[mod.title].push(score);
+    });
+  });
+  const avgScores = {};
+  Object.entries(performance).forEach(([title, scores]) => {
+    avgScores[title] = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+  });
+
+  // Calculate module completion rate
+  const totalModules = modules.length * users.length;
+  const completedModules = users.reduce((acc, u) => acc + Object.keys(u.quizResults).length, 0);
+  const completionRate = totalModules ? Math.round((completedModules / totalModules) * 100) : 0;
+
+  // Update average quiz score text
+  const allScores = [];
+  users.forEach(u => {
+    Object.values(u.quizResults).forEach(score => {
+      allScores.push(score);
+    });
+  });
+  const avgScoreOverall = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+  statAverageScore.textContent = `${avgScoreOverall}/100`;
+
+  // Destroy existing charts if any
+  if (participationChart) participationChart.destroy();
+  if (performanceChart) performanceChart.destroy();
+  if (completionChart) completionChart.destroy();
+
+  // Create participation chart
+  const ctxParticipation = document.getElementById('participationChart').getContext('2d');
+  participationChart = new Chart(ctxParticipation, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(participationCount),
+      datasets: [{
+        label: 'Jumlah Peserta',
+        data: Object.values(participationCount),
+        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        title: { display: true, text: 'Jumlah Peserta per Modul' }
+      },
+      scales: {
+        y: { beginAtZero: true, precision: 0 }
+      }
+    }
+  });
+
+  // Create performance chart
+  const ctxPerformance = document.getElementById('performanceChart').getContext('2d');
+  performanceChart = new Chart(ctxPerformance, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(avgScores),
+      datasets: [{
+        label: 'Rata-rata Skor',
+        data: Object.values(avgScores),
+        backgroundColor: 'rgba(75, 192, 192, 0.6)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        title: { display: true, text: 'Rata-rata Skor Quiz per Modul' }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 100 }
+      }
+    }
+  });
+
+  // Create completion rate chart
+  const ctxCompletion = document.getElementById('completionChart').getContext('2d');
+  completionChart = new Chart(ctxCompletion, {
+    type: 'doughnut',
+    data: {
+      labels: ['Selesai', 'Belum Selesai'],
+      datasets: [{
+        label: 'Persentase Penyelesaian Modul',
+        data: [completionRate, 100 - completionRate],
+        backgroundColor: ['rgba(153, 102, 255, 0.6)', 'rgba(201, 203, 207, 0.6)']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'Persentase Penyelesaian Modul' }
+      }
+    }
+  });
+}
 
 // Initialize app on page load
 init();
